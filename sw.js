@@ -1,6 +1,6 @@
 // Caches the whole game so it runs with no connection. The version changes on every build,
 // so a new build replaces the old cache the next time the app is opened online.
-const CACHE='ironhold-466c26aba5';
+const CACHE='ironhold-588cd0ef6f';
 const FILES=['./', 'index.html', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'icon-maskable-512.png', 'fonts/PirataOne-400.woff2', 'fonts/Cinzel-600.woff2', 'fonts/Cinzel-700.woff2', 'fonts/Cinzel-900.woff2', 'fonts/Alegreya-400.woff2', 'fonts/Alegreya-500.woff2', 'fonts/Alegreya-700.woff2', 'fonts/Alegreya-400i.woff2'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});

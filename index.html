@@ -222,6 +222,7 @@ kbd{font-family:var(--f-ui);font-weight:700;font-size:.72em;color:var(--bone);ba
 .tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(232,180,76,.25)}
 .tabs button{font-family:var(--f-ui);font-weight:700;font-size:12px;letter-spacing:.12em;text-transform:uppercase;padding:8px 12px;border-radius:5px;border:1px solid transparent;background:none;color:var(--bone-dim)}
 .tabs button:hover{color:var(--bone);background:rgba(255,255,255,.04)}
+.tabs .tab-scout{display:none}
 .tabs button[aria-selected="true"]{color:#2a1606;text-shadow:0 1px 0 rgba(255,240,200,.5);background:linear-gradient(#ffe9b0,#e0a03c);border-color:#2e1804;box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 2px 0 #2e1804}
 .items{display:flex;flex-direction:column;gap:4px}
 .pips{display:flex;gap:5px;margin-top:6px;padding-left:2px}
@@ -277,9 +278,26 @@ kbd{font-family:var(--f-ui);font-weight:700;font-size:.72em;color:var(--bone);ba
   .menu{padding:12px;gap:7px;width:min(300px,100%)}
   .btn.big{font-size:13px;padding:.6em 1.1em}
   .how{padding:14px 16px}.howgrid{gap:8px 16px;margin-bottom:10px}.howgrid span{font-size:13px}
-  .camp{gap:8px;height:auto}.scout,.shop{overflow:visible}
-  .camp-foot{position:sticky;bottom:-14px;padding:10px 0 12px;background:linear-gradient(rgba(5,6,11,0),rgba(5,6,11,.92) 35%)}
-  .camp-top h2{font-size:34px}.camp-top .eyebrow{display:none}.coinplate{font-size:17px;padding:6px 12px}
+  /* Camp on phones: a fixed side rail (title, gold, tabs, march) and one scrolling panel */
+  .mode-camp #overlay{padding:10px max(10px,env(safe-area-inset-right,0px)) 10px max(10px,env(safe-area-inset-left,0px));overflow:hidden}
+  .camp{height:100%;width:100%;max-width:none;display:grid;grid-template-columns:clamp(150px,22vw,200px) minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto;gap:8px 12px}
+  .camp-grid,.shop{display:contents}
+  .scout{display:none}
+  .camp-top{grid-column:1;grid-row:1;flex-direction:column;align-items:stretch;gap:6px;flex-wrap:nowrap}
+  .camp-top h2{font-size:30px}.camp-top .eyebrow,.camp-top .toggles{display:none}
+  .camp-top .row{display:block}.camp-top .row.toggles{display:none}.coinplate{display:flex;justify-content:center;font-size:17px;padding:5px 10px}
+  .tabs{grid-column:1;grid-row:2;display:grid;grid-template-columns:1fr 1fr;align-content:start;gap:4px;margin:0;padding:0;border:none;overflow-y:auto;min-height:0;scrollbar-width:none}
+  .tabs .tab-scout{display:block}
+  .tabs button{padding:7px 4px;font-size:10.5px;letter-spacing:.08em;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.03)}
+  #shopList{grid-column:2;grid-row:1/4;min-height:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;padding:12px 12px 16px;border-radius:8px;border:1px solid var(--iron-edge);
+    background:var(--rivets),var(--noise),var(--iron-bg);box-shadow:inset 0 1px 0 rgba(255,255,255,.16),var(--trim);scrollbar-width:thin;scrollbar-color:#6a4a1c transparent}
+  #shopList .sect:first-child{margin-top:0}
+  #shopList ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+  .camp-foot{grid-column:1;grid-row:3;flex-direction:column-reverse;gap:6px}
+  .camp-foot .btn{width:100%;font-size:12px;padding:.7em .6em}
+  .camp-foot kbd{display:none}
+  .buy{min-width:92px;font-size:11px;padding:.6em .7em}
+  .lohead small{font-size:12px}
   .scout,.shop{padding:12px}.sect{font-size:12px;margin-bottom:8px}
   .foe,.item{grid-template-columns:44px minmax(0,1fr) auto;gap:8px;padding:4px}
   .foe canvas,.item canvas,.lo canvas{width:44px;height:44px}
@@ -1724,12 +1742,12 @@ function showCamp(){
     <div class="camp-grid">
       <section class="plate scout"><h3 class="sect">Scouts report</h3><p class="hordes">${spec.waves.length} great horde${spec.waves.length>1?'s':''} tonight${S.night%10===0?' &middot; led by a Bone Colossus':''}</p>${dreadBase(S.lines)>=1.1?`<p class="hordes dreadnote">The crypt remembers your boldness. The dead march ×${dreadBase(S.lines).toFixed(1)} faster tonight.</p>`:''}<ul>${foes}${joins}</ul></section>
       <section class="plate trim shop"><nav class="tabs" role="tablist">
-        ${[['loadout','Loadout'],['armory','Armory'],['hero','Hero'],['allies','Soldiers'],['spells','Spells'],['keep','Keep']].map(([k,n])=>`<button role="tab" data-tab="${k}" aria-selected="${shopTab===k}">${n}</button>`).join('')}
+        ${[['scout','Tonight'],['loadout','Loadout'],['armory','Armory'],['hero','Hero'],['allies','Soldiers'],['spells','Spells'],['keep','Keep']].map(([k,n])=>`<button role="tab" data-tab="${k}" class="tab-${k}" aria-selected="${shopTab===k}">${n}</button>`).join('')}
       </nav><div class="items" id="shopList"></div></section>
     </div>
     <footer class="camp-foot"><button class="btn big" id="bMenu">Title</button><button class="btn primary big" id="bMarch">March to the Gate <kbd>Enter</kbd></button></footer>
   </div>`;
-  overlay.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{shopTab=b.dataset.tab;overlay.querySelectorAll('[data-tab]').forEach(x=>x.setAttribute('aria-selected',x===b));renderShop()});
+  overlay.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{shopTab=b.dataset.tab;overlay.querySelectorAll('[data-tab]').forEach(x=>x.setAttribute('aria-selected',x===b));renderShop();$('#shopList').scrollTop=0});
   wireToggles(overlay);
   $('#bMarch').onclick=startBattle;$('#bMenu').onclick=()=>{saved=S;showTitle()};
   renderShop();drawIcons(overlay);
@@ -1738,6 +1756,7 @@ function drawIcons(root){requestAnimationFrame(()=>root.querySelectorAll('canvas
 function pips(l,max){return`<span class="pips">${Array.from({length:max},(_,i)=>`<i class="${i<l?'on':''}"></i>`).join('')}</span>`}
 function renderShop(){
   const el=$('#shopList');let h='';
+  if(shopTab==='scout'){el.innerHTML=overlay.querySelector('.scout').innerHTML;drawIcons(el);return}
   if(shopTab==='loadout'){renderLoadout(el);return}
   if(shopTab==='armory'){
     h+='<h3 class="sect">Melee weapons</h3>';
