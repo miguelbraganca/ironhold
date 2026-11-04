@@ -1939,7 +1939,20 @@ fit();syncToggles();showTitle();requestAnimationFrame(frame);
 </script>
 
 <script>
-if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+if('serviceWorker' in navigator){
+  const hadSW=!!navigator.serviceWorker.controller;
+  addEventListener('load',()=>navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(reg=>{
+    // Look for a new version every time the app opens or comes back to the front.
+    const check=()=>{if(navigator.onLine)reg.update().catch(()=>{})};
+    check();document.addEventListener('visibilitychange',()=>{if(!document.hidden)check()});
+  }).catch(()=>{}));
+  // A new version took over: reload into it, but never in the middle of a battle.
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{
+    if(!hadSW)return;
+    const go=()=>{try{if(typeof mode==='undefined'||mode!=='battle'){location.reload();return true}}catch(e){location.reload();return true}return false};
+    if(!go()){const t=setInterval(()=>{if(go())clearInterval(t)},2000)}
+  });
+}
 </script>
 </body>
 </html>
