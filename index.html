@@ -1255,7 +1255,7 @@ function hurt(t,amt,o){
 }
 function kill(t){
   t.dead=true;t.hp=0;
-  if(t.isHero){banner('You have fallen. Hold the gate!',3);for(let i=0;i<14;i++)part({x:t.x,y:t.y,h:60,vx:rand(-160,160),vh:rand(120,380),life:1,kind:'spark',col:'#c4483f',size:5});return}
+  if(t.isHero){if(!G.over){G.over='lose';G.heroFell=true;G.overT=1.8;SFX.lose();banner('You have fallen',3)}for(let i=0;i<14;i++)part({x:t.x,y:t.y,h:60,vx:rand(-160,160),vh:rand(120,380),life:1,kind:'spark',col:'#c4483f',size:5});return}
   if(t.team==='enemy'){
     G.killed++;SFX.bone();
     const n=Math.round(t.def.iron*(1+(G.night-1)*0.01)*lootMul(S.up.irondrop)),chunks=t.def.boss?8:n>12?2:1;
@@ -1503,8 +1503,8 @@ function update(dt){
     if(S.up.cata>0){G.cataT-=dt;G.cataAnim=Math.max(0,G.cataAnim-dt*1.5);
       if(G.cataT<=0){const c=ENEM.filter(e=>e.x<GATE_X+2600&&e.x>GATE_X+250);
         if(c.length){const tg=c[Math.floor(Math.random()*c.length)];G.cataT=9-S.up.cata*0.9;G.cataAnim=1;launch('boulder','ally',60,FEET+4,FEET+20,tg.x,0,45+25*S.up.cata)}else G.cataT=0.5}}
-    if(G.gateHp<=0){G.gateHp=0;G.over='lose';G.overT=1.4;SFX.lose();banner('The gate has fallen',3)}
-    else if(!G.queue.length&&!G.ents.some(e=>e.team==='enemy'&&!e.dead)&&G.t>3){G.over='win';G.overT=1.6;SFX.win();banner(`Night ${G.night} survived`,3);for(const d of G.drops)d.magnet=true}
+    if(!G.over&&G.gateHp<=0){G.gateHp=0;G.over='lose';G.overT=1.4;SFX.lose();banner('The gate has fallen',3)}
+    else if(!G.over&&!G.queue.length&&!G.ents.some(e=>e.team==='enemy'&&!e.dead)&&G.t>3){G.over='win';G.overT=1.6;SFX.win();banner(`Night ${G.night} survived`,3);for(const d of G.drops)d.magnet=true}
   }else{G.overT-=dt;if(G.overT<=0&&!G.shown){G.shown=true;showResults()}}
   G.ents=G.ents.filter(e=>!e.dead||e.isHero);
   G.projs=G.projs.filter(p=>updProj(p,dt));
@@ -1639,8 +1639,7 @@ function drawScreenUI(cam,t){
     ctx.fillStyle='#ffe2d6';ctx.font='900 21px Cinzel,Georgia,serif';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText('◂  Gate under attack',42,262);ctx.textBaseline='alphabetic'}
   if(G.chillT>0){ctx.fillStyle=`rgba(140,200,255,${Math.min(0.13,G.chillT*0.05)})`;ctx.fillRect(0,0,W,H)}
   if(G.flash>0){ctx.fillStyle=`rgba(255,255,235,${G.flash*1.6})`;ctx.fillRect(0,0,W,H)}
-  if(hero.dead){const g=ctx.createRadialGradient(W/2,H/2,H*0.3,W/2,H/2,W*0.7);g.addColorStop(0,'rgba(60,0,0,0)');g.addColorStop(1,'rgba(60,0,0,.45)');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
-    ctx.textAlign='center';ctx.font='700 22px Cinzel,Georgia,serif';ctx.lineWidth=5;ctx.strokeStyle='#000';const s='Your hero is down until dawn. Your soldiers fight on.';ctx.strokeText(s,W/2,H-150);ctx.fillStyle='#f2c8b8';ctx.fillText(s,W/2,H-150)}
+  if(hero.dead){const g=ctx.createRadialGradient(W/2,H/2,H*0.3,W/2,H/2,W*0.7);g.addColorStop(0,'rgba(60,0,0,0)');g.addColorStop(1,'rgba(60,0,0,.45)');ctx.fillStyle=g;ctx.fillRect(0,0,W,H);}
   if(G.banner){const b=G.banner,a=clamp(Math.min(b.life,b.max-b.life)*3,0,1);drawBanner(b.txt,a)}
   if(G.paused){ctx.fillStyle='rgba(10,11,20,.35)';ctx.fillRect(0,0,W,H)}
 }
@@ -1713,7 +1712,7 @@ function showTitle(){
         <div><b>Iron</b><span>Walk over the iron skeletons drop. Summon soldiers with <kbd>1</kbd> to <kbd>7</kbd>. Upgrade the forge with <kbd>F</kbd>.</span></div>
         <div><b>Spells</b><span>Every hit fills your Rage. Cast your prepared spells with <kbd>Q</kbd> and <kbd>E</kbd>.</span></div>
         <div><b>Great hordes</b><span>Skulls on the night bar mark them. A war horn sounds five seconds before each.</span></div>
-        <div><b>Your life</b><span>You heal after 2.5 seconds without taking a hit, faster by the gate. The Recovery upgrade speeds it up. If you fall, you are out until dawn, so keep your soldiers strong.</span></div>
+        <div><b>Your life</b><span>You heal after 2.5 seconds without taking a hit, faster by the gate. The Recovery upgrade speeds it up. If you fall, the night is lost.</span></div>
         <div><b>Camp</b><span>Spend gold between nights, and pick your soldiers and spells in the Loadout tab.</span></div>
       </div>
       <div class="row"><button class="btn" id="bBack">Back</button>${toggleRow()}</div>
@@ -1807,8 +1806,8 @@ function showResults(){
   const nextLo=dreadBase(S.lines);
   persist();saved=S;overlay.hidden=false;$('#touch').hidden=true;
   overlay.innerHTML=`<div class="plate trim result ${win?'win':'lose'}">
-    <p class="eyebrow">${win?'Dawn breaks':'The keep is overrun'}</p>
-    <h2>${win?`Night ${n} survived`:'The gate has fallen'}</h2>
+    <p class="eyebrow">${win?'Dawn breaks':G.heroFell?'The blacksmith is down':'The keep is overrun'}</p>
+    <h2>${win?`Night ${n} survived`:G.heroFell?'You have fallen':'The gate has fallen'}</h2>
     <p class="flavor">${win?'The last skeleton crumbles and the crypt goes quiet until sundown.':'You keep every coin you picked up. Spend it at camp and try again.'}</p>
     <div class="stats">
       <div><span>Skeletons broken</span><b>${G.killed} / ${G.total}</b></div>
