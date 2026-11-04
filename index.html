@@ -185,7 +185,7 @@ kbd{font-family:var(--f-ui);font-weight:700;font-size:.72em;color:var(--bone);ba
 .side.l{left:calc(var(--u)*.6)}.side.r{right:calc(var(--u)*.6)}
 
 /* ---------- menus ---------- */
-#overlay{position:absolute;inset:0;display:flex;align-items:flex-start;justify-content:center;padding:14px;box-sizing:border-box;overflow:auto}
+#overlay{position:absolute;inset:0;z-index:20;display:flex;align-items:flex-start;justify-content:center;padding:14px;box-sizing:border-box;overflow:auto}
 .mode-title #overlay{justify-content:flex-start;background:linear-gradient(90deg,rgba(5,6,11,.86) 0%,rgba(5,6,11,.55) 38%,rgba(5,6,11,0) 62%)}
 .mode-camp #overlay,.paused #overlay{background:rgba(5,6,11,.6);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
 .title-screen{display:flex;flex-direction:column;justify-content:center;gap:24px;padding-left:min(5vw,64px);max-width:min(560px,100%);box-sizing:border-box}
@@ -258,6 +258,7 @@ kbd{font-family:var(--f-ui);font-weight:700;font-size:.72em;color:var(--bone);ba
 @media (prefers-reduced-motion:reduce){.meter em{transition:none}.btn,.card,.lo{transition:none}}
 
 #overlay>*{margin-block:auto}
+.touch kbd,.touch .k,html:not(.touch) .t{display:none!important}
 /* ---------- phones & short screens ---------- */
 #rotate{display:none;position:absolute;inset:0;z-index:30;align-items:center;justify-content:center;padding:16px;background:rgba(5,6,11,.88)}
 #rotate .plate{padding:22px;max-width:320px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px}
@@ -1707,10 +1708,10 @@ function showTitle(){
     <div class="how plate trim" id="howPanel" hidden>
       <h3 class="sect">How to play</h3>
       <div class="howgrid">
-        <div><b>Move</b><span><kbd>A</kbd> <kbd>D</kbd> or the arrow keys. On a tablet, hold either side of the field.</span></div>
-        <div><b>Fight</b><span>You swing on your own when a skeleton is in reach, and throw at ones farther away. <kbd>Space</kbd> swings, <kbd>R</kbd> throws.</span></div>
-        <div><b>Iron</b><span>Walk over the iron skeletons drop. Summon soldiers with <kbd>1</kbd> to <kbd>7</kbd>. Upgrade the forge with <kbd>F</kbd>.</span></div>
-        <div><b>Spells</b><span>Every hit fills your Rage. Cast your prepared spells with <kbd>Q</kbd> and <kbd>E</kbd>.</span></div>
+        <div><b>Move</b><span><span class="k"><kbd>A</kbd> <kbd>D</kbd> or the arrow keys. On a tablet, hold either side of the field.</span><span class="t">Hold the left or right side of the field to walk.</span></span></div>
+        <div><b>Fight</b><span>You swing on your own when a skeleton is in reach, and throw at ones farther away. <span class="k"><kbd>Space</kbd> swings, <kbd>R</kbd> throws.</span><span class="t">Tap the round throw button next to the spells to throw right away.</span></span></div>
+        <div><b>Iron</b><span>Walk over the iron skeletons drop. <span class="k">Summon soldiers with <kbd>1</kbd> to <kbd>7</kbd>. Upgrade the forge with <kbd>F</kbd>.</span><span class="t">Tap a soldier card to summon it, and Upgrade to improve the forge.</span></span></div>
+        <div><b>Spells</b><span>Every hit fills your Rage. <span class="k">Cast your prepared spells with <kbd>Q</kbd> and <kbd>E</kbd>.</span><span class="t">Tap a spell when its ring is full to cast it.</span></span></div>
         <div><b>Great hordes</b><span>Skulls on the night bar mark them. A war horn sounds five seconds before each.</span></div>
         <div><b>Your life</b><span>You heal after 2.5 seconds without taking a hit, faster by the gate. The Recovery upgrade speeds it up. If you fall, the night is lost.</span></div>
         <div><b>Camp</b><span>Spend gold between nights, and pick your soldiers and spells in the Loadout tab.</span></div>
@@ -1839,10 +1840,10 @@ function ensureLoadout(){
 }
 function renderLoadout(el){
   const slots=5+S.up.slots,ss=1+S.up.spellslot;
-  let h=`<div class="lohead"><h3 class="sect">Soldiers</h3><small>${S.loadout.length} of ${slots} chosen. In battle they use keys 1 to ${slots}.</small></div><div class="logrid">`;
+  let h=`<div class="lohead"><h3 class="sect">Soldiers</h3><small>${S.loadout.length} of ${slots} chosen.<span class="k"> In battle they use keys 1 to ${slots}.</span></small></div><div class="logrid">`;
   for(const a of ALLIES){const lock=S.night<a.night,on=S.loadout.includes(a.id);
     h+=`<button class="lo ${on?'on':''}" data-lo="${a.id}" aria-pressed="${on}" ${lock?'disabled':''}><canvas data-icon="${a.id}"></canvas><b>${a.name}</b><small>${lock?'Night '+a.night:a.cost+' iron'}</small></button>`}
-  h+=`</div><div class="lohead"><h3 class="sect">Spells</h3><small>${S.spells.length} of ${ss} prepared. Keys Q and E. Spells cost Rage.</small></div><div class="logrid">`;
+  h+=`</div><div class="lohead"><h3 class="sect">Spells</h3><small>${S.spells.length} of ${ss} prepared.<span class="k"> Keys Q and E.</span> Spells cost Rage.</small></div><div class="logrid">`;
   for(const sp of SPELLS){const own=(S.spellLv[sp.id]||0)>0,on=S.spells.includes(sp.id);
     h+=`<button class="lo ${on?'on':''}" data-ls="${sp.id}" aria-pressed="${on}" ${own?'':'disabled'}><canvas data-icon="sp_${sp.id}"></canvas><b>${sp.name}</b><small>${own?sp.cost+' rage':S.night<sp.night?'Night '+sp.night:'Learn in Spells'}</small></button>`}
   h+=`</div><p class="lonote" id="loNote"></p>`;
@@ -1867,6 +1868,8 @@ function wireToggles(root){root.querySelectorAll('[data-tg]').forEach(b=>b.oncli
 /* ================= input ================= */
 const reduceMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const isTouch=matchMedia('(pointer: coarse)').matches||('ontouchstart' in window&&navigator.maxTouchPoints>0);
+document.documentElement.classList.toggle('touch',isTouch);
+addEventListener('keydown',e=>{if(e.key&&e.key.length&&!['Unidentified','Process'].includes(e.key))document.documentElement.classList.remove('touch')},true);
 addEventListener('keydown',e=>{
   SFX.init();
   if(mode==='battle'){
