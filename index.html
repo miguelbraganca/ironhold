@@ -117,16 +117,18 @@ kbd{font-family:var(--f-ui);font-weight:700;font-size:.72em;color:var(--bone);ba
 .barrow{display:flex;align-items:center;gap:calc(var(--u)*.4)}
 .barrow .meter{width:calc(var(--u)*16)}
 .barrow .meter.rage{height:calc(var(--u)*1.05)}
-.hud-night{padding:calc(var(--u)*.45) calc(var(--u)*1.8) calc(var(--u)*.55);text-align:center}
-.nightname{font-family:var(--f-logo);font-size:2.5em;line-height:1}
-.prog{position:relative;width:calc(var(--u)*22);height:calc(var(--u)*1.1);margin:calc(var(--u)*.45) auto calc(var(--u)*.4);padding:2px;box-sizing:border-box;background:linear-gradient(#040507,#14151c);border:1px solid #000;border-radius:calc(var(--u)*.4);box-shadow:0 0 0 1px rgba(255,255,255,.09),inset 0 2px 4px rgba(0,0,0,.9)}
+.hud-night{padding:calc(var(--u)*.35) calc(var(--u)*1.6) calc(var(--u)*.45);text-align:center}
+.nightname{font-family:var(--f-logo);font-size:1.8em;line-height:1}
+.prog{position:relative;width:calc(var(--u)*22);height:calc(var(--u)*1.1);margin:calc(var(--u)*.4) auto calc(var(--u)*.35);padding:2px;box-sizing:border-box;background:linear-gradient(#040507,#14151c);border:1px solid #000;border-radius:calc(var(--u)*.4);box-shadow:0 0 0 1px rgba(255,255,255,.09),inset 0 2px 4px rgba(0,0,0,.9)}
 .prog>i{display:block;height:100%;width:0;border-radius:calc(var(--u)*.25);background:linear-gradient(180deg,#d6c8ff,#8c6cf0 55%,#4e3a9a);box-shadow:0 0 calc(var(--u)*.8) rgba(154,124,240,.5)}
 .mark{position:absolute;top:50%;width:calc(var(--u)*2.2);height:calc(var(--u)*2.2);transform:translate(-50%,-50%);filter:drop-shadow(0 0 calc(var(--u)*.35) rgba(255,70,50,.9))}
 .mark svg{display:block;width:100%;height:100%}
 .mark.done{filter:grayscale(1);opacity:.45}
 .leftcount{font-family:var(--f-ui);font-weight:700;font-size:.78em;letter-spacing:.12em;text-transform:uppercase;color:var(--bone-dim)}
 .leftcount span{color:var(--bone)}
-.dread{margin-top:calc(var(--u)*.25);font-family:var(--f-ui);font-weight:700;font-size:.74em;letter-spacing:.12em;text-transform:uppercase;color:#d9a0f0;text-shadow:0 0 calc(var(--u)*.6) rgba(170,90,230,.55);transition:color .4s}
+.nightsub{display:flex;justify-content:center;align-items:baseline;gap:.6em;white-space:nowrap}
+.dread::before{content:"\00B7";margin-right:.6em;color:var(--bone-dim);text-shadow:none}
+.dread{font-family:var(--f-ui);font-weight:700;font-size:.74em;letter-spacing:.12em;text-transform:uppercase;color:#d9a0f0;text-shadow:0 0 calc(var(--u)*.6) rgba(170,90,230,.55);transition:color .4s}
 .dread b{font-size:1.15em;color:#f0d8ff}
 .dread.hot{color:#ff8a6a;text-shadow:0 0 calc(var(--u)*.8) rgba(255,90,50,.7)}.dread.hot b{color:#ffe0d0}
 .dread[hidden]{display:none}
@@ -190,7 +192,7 @@ kbd{font-family:var(--f-ui);font-weight:700;font-size:.72em;color:var(--bone);ba
 .forgeinfo .meter{width:calc(var(--u)*9);height:calc(var(--u)*.85)}
 
 /* ---------- touch ---------- */
-.touch #bar{bottom:calc(1.8cqh + max(12px,env(safe-area-inset-bottom,0px)));gap:calc(var(--u)*.7)}
+.touch #bar{bottom:calc(1cqh + max(6px,env(safe-area-inset-bottom,0px)));gap:calc(var(--u)*.7)}
 .touch #cards{flex:0 1 auto;min-width:0;gap:calc(var(--u)*.5)}
 .touch .card{flex:0 1 auto;width:calc(var(--u)*8.2);min-width:calc(var(--u)*6.2)}
 .touch #spellbar,.touch #forge{flex-shrink:0}
@@ -347,8 +349,7 @@ kbd{font-family:var(--f-ui);font-weight:700;font-size:.72em;color:var(--bone);ba
         <div class="plate trim hud-night">
           <div class="nightname goldtext">Night <span id="hNight">1</span></div>
           <div class="prog" id="hProgWrap"><i id="hProg"></i></div>
-          <div class="leftcount"><span id="hLeft">0</span> skeletons remain</div>
-          <div class="dread" id="hDread" hidden title="Dread: the deeper you push toward the crypt, the faster the dead come. Skeletons drop more gold while it is high.">Dread <b id="hDreadV">×1.0</b></div>
+          <div class="nightsub"><span class="leftcount"><span id="hLeft">0</span> skeletons remain</span><span class="dread" id="hDread" hidden title="Dread: the deeper you push toward the crypt, the faster the dead come. Skeletons drop more gold while it is high.">Dread <b id="hDreadV">×1.0</b></span></div>
         </div>
         <div class="hud-right">
           <div class="plate gatebox"><span class="ico ico-gate"></span><i class="meter gate"><em id="hGate"></em></i></div>
@@ -1565,7 +1566,7 @@ function render(){
   const t=performance.now()/1000,inB=mode==='battle'&&G;
   const cam=inB?camX:500;
   // On touch screens the battle buttons are bigger, so the whole scene sits a little higher to keep the road clear of them.
-  const lift=document.documentElement.classList.contains('touch')?40:0;
+  const lift=document.documentElement.classList.contains('touch')?32:0;
   ctx.save();ctx.translate(0,-lift);
   drawSky(t,cam);drawParallax(cam,t);
   ctx.save();
