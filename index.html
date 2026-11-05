@@ -1641,6 +1641,7 @@ function canvasPlate(x,y,w,h,c0,c1){
 function drawBanner(txt,a,y0){
   ctx.save();ctx.globalAlpha=a;ctx.font='70px "Pirata One",Georgia,serif';
   const tw=ctx.measureText(txt).width,w=tw+150,x=W/2-w/2,y=y0||168,h=92;
+  ctx.translate(W/2,y+h/2);ctx.scale(0.85,0.85);ctx.translate(-W/2,-(y+h/2));
   for(const s of[-1,1]){const ex=s<0?x+6:x+w-6;ctx.beginPath();ctx.moveTo(ex,y+22);ctx.lineTo(ex-s*72,y+28);ctx.lineTo(ex-s*46,y+h/2+16);ctx.lineTo(ex-s*72,y+h+8);ctx.lineTo(ex,y+h);ctx.closePath();
     ctx.fillStyle='#4a1412';ctx.fill();ctx.lineWidth=3;ctx.strokeStyle='#140d16';ctx.stroke()}
   const g=ctx.createLinearGradient(0,y,0,y+h);g.addColorStop(0,'#a8302a');g.addColorStop(0.5,'#741c1a');g.addColorStop(1,'#4a1212');
