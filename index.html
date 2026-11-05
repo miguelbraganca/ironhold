@@ -1919,7 +1919,11 @@ addEventListener('keyup',e=>{keys[e.code]=false});
 // Phones can blur the page for a moment (gesture bar, the viewer's own controls) without leaving the game,
 // so touch devices only pause when the game is actually hidden.
 addEventListener('blur',()=>{for(const k in keys)keys[k]=false;touchPts.clear();touchDir=0;if(!isTouch)togglePause(true)});
-document.addEventListener('visibilitychange',()=>{if(document.hidden)togglePause(true)});
+// Leaving the app (home screen, another app, screen off) pauses the battle and silences all audio;
+// coming back restores the sound. The music is generated live, so it must be suspended explicitly.
+function audioAway(away){const a=SFX.ac;if(!a)return;try{if(away){if(a.state==='running')a.suspend()}else if(a.state==='suspended')a.resume()}catch(e){}}
+document.addEventListener('visibilitychange',()=>{if(document.hidden){togglePause(true);audioAway(true)}else audioAway(false)});
+addEventListener('pagehide',()=>audioAway(true));addEventListener('pageshow',()=>{if(!document.hidden)audioAway(false)});
 $('#bPause').onclick=e=>{togglePause();e.currentTarget.blur()};
 $('#bMusic').onclick=e=>{toggleSetting('music');e.currentTarget.blur()};$('#bSfx').onclick=e=>{toggleSetting('sfx');e.currentTarget.blur()};
 $('#forge').onclick=e=>{upgradeForge();e.currentTarget.blur()};
