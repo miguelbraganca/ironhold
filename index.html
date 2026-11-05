@@ -170,17 +170,40 @@ kbd{font-family:var(--f-ui);font-weight:700;font-size:.72em;color:var(--bone);ba
 .spell.throw .ring{background:conic-gradient(#b4c6d8 var(--p,0%),#141820 0)}
 .spell.throw.ready .ring{background:conic-gradient(#e6eef8 0 100%);box-shadow:0 0 0 1px #000,0 0 calc(var(--u)*1.2) rgba(180,198,216,.7)}
 .spell.throw .face{background:radial-gradient(circle at 50% 35%,#4a5468,#141820);box-shadow:0 0 0 1px #000,inset 0 0 0 calc(var(--u)*.22) #8a96a8,inset 0 0 0 calc(calc(var(--u)*.22) + 1px) #1a1e26,inset 0 calc(var(--u)*.5) calc(var(--u)*1) rgba(0,0,0,.6)}
-#forge{margin-left:auto;display:flex;align-items:center;gap:calc(var(--u)*.8);padding:calc(var(--u)*.65) calc(var(--u)*.9) calc(var(--u)*.65) calc(var(--u)*.65)}
+#forge{margin-left:auto;display:flex;align-items:center;gap:calc(var(--u)*.8);padding:calc(var(--u)*.65) calc(var(--u)*1.1) calc(var(--u)*.65) calc(var(--u)*.65);
+  font:inherit;color:inherit;text-align:left;cursor:pointer;transition:transform .08s,filter .15s}
+#forge:active{transform:translateY(2px)}
+#forge.can{box-shadow:inset 0 1px 0 rgba(255,255,255,.2),inset 0 -4px 8px rgba(0,0,0,.45),var(--trim),0 0 calc(var(--u)*1.6) rgba(255,180,80,.55);animation:forgeGlow 1.1s ease-in-out infinite alternate}
+#forge.can .anvil{box-shadow:0 0 0 1px #000,inset 0 0 0 calc(var(--u)*.22) #e8b44c,inset 0 0 0 calc(calc(var(--u)*.22) + 1px) #000,inset 0 0 calc(var(--u)*1.6) rgba(255,170,70,.9),0 0 calc(var(--u)*1.2) rgba(255,170,70,.6)}
+@keyframes forgeGlow{from{box-shadow:inset 0 1px 0 rgba(255,255,255,.2),inset 0 -4px 8px rgba(0,0,0,.45),var(--trim),0 0 calc(var(--u)*.8) rgba(255,180,80,.35)}
+  to{box-shadow:inset 0 1px 0 rgba(255,255,255,.2),inset 0 -4px 8px rgba(0,0,0,.45),var(--trim),0 0 calc(var(--u)*2.4) rgba(255,200,100,.85)}}
+#forge .upline{display:flex;align-items:center;gap:.3em;font-family:var(--f-ui);font-weight:900;font-size:.82em;letter-spacing:.08em;text-transform:uppercase;color:var(--bone-dim);white-space:nowrap}
+#forge .upline kbd{font-size:.85em}
+#forge.can .upline{color:var(--gold-hi);text-shadow:0 0 6px rgba(255,180,80,.7)}
+#forge.max .upline{color:var(--hex)}
+#forge.max .upline .ucost{display:none}
 .anvil{width:calc(var(--u)*4.8);height:calc(var(--u)*4.8);flex:none;border-radius:50%;background:radial-gradient(circle at 50% 40%,#6a3420,#180e12);box-shadow:0 0 0 1px #000,inset 0 0 0 calc(var(--u)*.22) #6a6e7a,inset 0 0 0 calc(calc(var(--u)*.22) + 1px) #000,inset 0 0 calc(var(--u)*1.2) rgba(240,138,60,.55)}
 .anvil canvas{display:block;width:100%;height:100%}
 .forgeinfo{display:flex;flex-direction:column;gap:calc(var(--u)*.3)}
 .ironrow{display:flex;align-items:center;gap:calc(var(--u)*.35);font-family:var(--f-ui);font-weight:900;font-size:2em;line-height:1;color:var(--steel);text-shadow:0 2px 0 #000}
 .forgeinfo small{font-family:var(--f-ui);font-weight:700;font-size:.72em;letter-spacing:.08em;text-transform:uppercase;color:var(--bone-dim);white-space:nowrap}
 .forgeinfo .meter{width:calc(var(--u)*9);height:calc(var(--u)*.85)}
-#bForge{font-size:.82em;flex-direction:column;gap:.2em;padding:.5em .8em}
-#bForge .fc{display:flex;align-items:center;gap:.25em;font-weight:900}
 
 /* ---------- touch ---------- */
+.touch #bar{bottom:calc(1.8cqh + max(12px,env(safe-area-inset-bottom,0px)));gap:calc(var(--u)*.7)}
+.touch #cards{flex:0 1 auto;min-width:0;gap:calc(var(--u)*.5)}
+.touch .card{flex:0 1 auto;width:calc(var(--u)*8.2);min-width:calc(var(--u)*6.2)}
+.touch #spellbar,.touch #forge{flex-shrink:0}
+.touch .card .portrait{bottom:calc(var(--u)*2.1)}
+.touch .card .cost{height:calc(var(--u)*2.1);font-size:1.15em}
+.touch .card:hover{transform:none}
+.touch .spell{width:calc(var(--u)*7.6);height:calc(var(--u)*7.6)}
+.touch .spell.throw{width:calc(var(--u)*6.4);height:calc(var(--u)*6.4)}
+.touch .spell .rc{font-size:1em}
+.touch #spellbar{gap:calc(var(--u)*.8);margin-left:calc(var(--u)*.3)}
+.touch .anvil{width:calc(var(--u)*5.4);height:calc(var(--u)*5.4)}
+.touch .ironrow{font-size:2.3em}
+.touch #forge .upline{font-size:.95em}
 #touch{position:absolute;inset:0;pointer-events:none}
 .side{position:absolute;top:24cqh;bottom:26cqh;width:calc(var(--u)*5);display:grid;place-items:center;color:rgba(255,230,180,.25);font-size:calc(var(--u)*4);text-shadow:0 0 calc(var(--u)*1) rgba(0,0,0,.6)}
 .side.l{left:calc(var(--u)*.6)}.side.r{right:calc(var(--u)*.6)}
@@ -256,7 +279,7 @@ kbd{font-family:var(--f-ui);font-weight:700;font-size:.72em;color:var(--bone);ba
 .stats b{font-family:var(--f-ui);font-weight:900;font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:6px}
 .stats .total{border-bottom:none;font-size:18px}.stats .total b{color:var(--gold)}
 .col{display:flex;flex-direction:column;gap:10px;width:min(300px,100%)}
-@media (prefers-reduced-motion:reduce){.meter em{transition:none}.btn,.card,.lo{transition:none}}
+@media (prefers-reduced-motion:reduce){#forge.can{animation:none}.meter em{transition:none}.btn,.card,.lo{transition:none}}
 
 #overlay>*{margin-block:auto}
 .touch kbd,.touch .k,html:not(.touch) .t{display:none!important}
@@ -339,15 +362,15 @@ kbd{font-family:var(--f-ui);font-weight:700;font-size:.72em;color:var(--bone);ba
       <div id="bar">
         <div id="cards"></div>
         <div id="spellbar"></div>
-        <div id="forge" class="plate">
-          <div class="anvil"><canvas id="forgeIcon" aria-hidden="true"></canvas></div>
-          <div class="forgeinfo">
-            <div class="ironrow"><span class="ico ico-ingot"></span><span id="hIron">0</span></div>
+        <button id="forge" class="plate" title="Upgrade the forge (F)" aria-label="Upgrade the forge">
+          <span class="anvil"><canvas id="forgeIcon" aria-hidden="true"></canvas></span>
+          <span class="forgeinfo">
+            <span class="ironrow"><span class="ico ico-ingot"></span><span id="hIron">0</span></span>
             <small>Forge <b id="hForgeLv">I</b> &middot; <span id="hRate">2</span>/s</small>
             <i class="meter forgem"><em id="hForgeBar"></em></i>
-          </div>
-          <button id="bForge" class="btn primary" title="Upgrade the forge (F)">Upgrade<span class="fc"><span class="ico ico-ingot"></span><span id="hForgeCost">50</span></span></button>
-        </div>
+            <span class="upline"><span id="hForgeUp">Upgrade</span><span class="ucost"><span class="ico ico-ingot"></span><span id="hForgeCost">50</span></span><kbd>F</kbd></span>
+          </span>
+        </button>
       </div>
     </div>
     <div id="overlay"></div>
@@ -993,7 +1016,7 @@ const BG=(()=>{const r=rng(42);
   const pebbles=[];for(let i=0;i<520;i++)pebbles.push([r()*WORLD,ROAD_T-60+r()*(H-ROAD_T+60),r()]);
   const tufts=[];for(let x=GATE_X;x<WORLD;x+=10+r()*22)tufts.push([x,r()]);
   const graves=[];for(let x=2490;x<2990;x+=48+r()*40)graves.push([x,r(),(r()-0.5)*0.25,r()]);
-  const wallBlocks=[];for(let y=0,row=0;y<H;y+=34,row++)for(let x=-((row%2)*30);x<GATE_X+20;){const w=48+r()*30;wallBlocks.push([x,y,w,r()]);x+=w}
+  const wallBlocks=[];for(let y=0,row=0;y<H+80;y+=34,row++)for(let x=-((row%2)*30);x<GATE_X+20;){const w=48+r()*30;wallBlocks.push([x,y,w,r()]);x+=w}
   const thatch=[];for(let i=0;i<60;i++)thatch.push(r());
   return{stars,far,mid,midHouses,midTrees,cobbles,pebbles,tufts,graves,wallBlocks,thatch}})();
 const PROPS=[
@@ -1034,7 +1057,7 @@ function drawParallax(cam,t){
 function drawGround(cam){
   let g=ctx.createLinearGradient(0,HORIZON,0,ROAD_T);g.addColorStop(0,'#1d2224');g.addColorStop(1,'#283026');ctx.fillStyle=g;ctx.fillRect(cam-10,HORIZON,W+20,ROAD_T-HORIZON+2);
   g=ctx.createLinearGradient(0,ROAD_T,0,ROAD_B);g.addColorStop(0,'#3a3038');g.addColorStop(0.5,'#4a3d3e');g.addColorStop(1,'#322a32');ctx.fillStyle=g;ctx.fillRect(cam-10,ROAD_T,W+20,ROAD_B-ROAD_T);
-  g=ctx.createLinearGradient(0,ROAD_B,0,H);g.addColorStop(0,'#222a22');g.addColorStop(1,'#0f130f');ctx.fillStyle=g;ctx.fillRect(cam-10,ROAD_B,W+20,H-ROAD_B);
+  g=ctx.createLinearGradient(0,ROAD_B,0,H);g.addColorStop(0,'#222a22');g.addColorStop(1,'#0f130f');ctx.fillStyle=g;ctx.fillRect(cam-10,ROAD_B,W+20,H-ROAD_B+80);
   ctx.strokeStyle='rgba(0,0,0,.25)';ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(cam-10,FEET-6);ctx.lineTo(cam+W+10,FEET-6);ctx.moveTo(cam-10,FEET+36);ctx.lineTo(cam+W+10,FEET+36);ctx.stroke();
   for(const[x,y,w,h,k]of BG.cobbles){if(x<cam-20||x>cam+W+20)continue;ctx.fillStyle=k>0.5?'#575058':'#4a4450';ctx.beginPath();ctx.ellipse(x,y,w,h,0,0,7);ctx.fill();ctx.fillStyle='rgba(255,255,255,.06)';ctx.beginPath();ctx.ellipse(x-1,y-1,w*0.6,h*0.5,0,0,7);ctx.fill()}
   for(const[x,y,k]of BG.pebbles){if(x<cam-10||x>cam+W+10)continue;ctx.fillStyle=k>0.5?'#3c3440':'#221c27';ctx.fillRect(x,y,2+k*4,1.5+k*1.5)}
@@ -1541,6 +1564,9 @@ function render(){
   const k=cv.width/W;ctx.setTransform(k,0,0,k,0,0);
   const t=performance.now()/1000,inB=mode==='battle'&&G;
   const cam=inB?camX:500;
+  // On touch screens the battle buttons are bigger, so the whole scene sits a little higher to keep the road clear of them.
+  const lift=document.documentElement.classList.contains('touch')?40:0;
+  ctx.save();ctx.translate(0,-lift);
   drawSky(t,cam);drawParallax(cam,t);
   ctx.save();
   if(inB&&G.shake>0&&!reduceMotion)ctx.translate(rand(-G.shake,G.shake)*0.6,rand(-G.shake,G.shake)*0.6);
@@ -1548,7 +1574,7 @@ function render(){
   drawGround(cam);drawProps(cam,t,inB?G:null);drawKeep(inB?G:null,t);
   if(inB)drawBattle(cam,t);else drawDiorama(cam,t);
   drawLights(cam,t,inB?G:null);drawMotes(cam,t);
-  ctx.restore();
+  ctx.restore();ctx.restore();
   drawFore(cam);grade();drawVignette();
   if(inB)drawScreenUI(cam,t);
 }
@@ -1688,7 +1714,8 @@ function updateHUD(){
   setTxt('#hIron',String(Math.floor(G.iron)));setTxt('#hGold',String(S.gold));setTxt('#hLeft',String(G.total-G.killed));
   setTxt('#hForgeLv',ROMAN[G.forge]);setTxt('#hRate',forgeRate(G.forge).toFixed(1).replace(/\.0$/,''));
   const maxed=G.forge>=FORGE_MAX,fc=forgeCost(G.forge);
-  setTxt('#hForgeCost',maxed?'Max':String(fc));$('#bForge').disabled=maxed||G.iron<fc;
+  setTxt('#hForgeCost',String(fc));setTxt('#hForgeUp',maxed?'Forge maxed':'Upgrade');
+  const fb=$('#forge');fb.classList.toggle('can',!maxed&&G.iron>=fc);fb.classList.toggle('max',maxed);
   $('#hForgeBar').style.width=(maxed?100:Math.min(100,100*G.iron/fc))+'%';
   for(const c of barCards){const cd=G.ucd[c.d.id]||0;c.cool.style.setProperty('--cd',(100*cd/c.d.cool)+'%');
     c.b.classList.toggle('poor',G.iron<c.d.cost);c.b.classList.toggle('ready',G.iron>=c.d.cost&&cd<=0)}
@@ -1887,11 +1914,13 @@ addEventListener('keydown',e=>{
   }
 });
 addEventListener('keyup',e=>{keys[e.code]=false});
-addEventListener('blur',()=>{for(const k in keys)keys[k]=false;touchPts.clear();touchDir=0;togglePause(true)});
+// Phones can blur the page for a moment (gesture bar, the viewer's own controls) without leaving the game,
+// so touch devices only pause when the game is actually hidden.
+addEventListener('blur',()=>{for(const k in keys)keys[k]=false;touchPts.clear();touchDir=0;if(!isTouch)togglePause(true)});
 document.addEventListener('visibilitychange',()=>{if(document.hidden)togglePause(true)});
 $('#bPause').onclick=e=>{togglePause();e.currentTarget.blur()};
 $('#bMusic').onclick=e=>{toggleSetting('music');e.currentTarget.blur()};$('#bSfx').onclick=e=>{toggleSetting('sfx');e.currentTarget.blur()};
-$('#bForge').onclick=e=>{upgradeForge();e.currentTarget.blur()};
+$('#forge').onclick=e=>{upgradeForge();e.currentTarget.blur()};
 function recalcTouch(){let d=0;for(const v of touchPts.values())d=v;touchDir=d}
 cv.addEventListener('pointerdown',e=>{if(mode!=='battle')return;SFX.init();const r=cv.getBoundingClientRect();touchPts.set(e.pointerId,e.clientX<r.left+r.width/2?-1:1);cv.setPointerCapture(e.pointerId);recalcTouch()});
 cv.addEventListener('pointermove',e=>{if(!touchPts.has(e.pointerId))return;const r=cv.getBoundingClientRect();touchPts.set(e.pointerId,e.clientX<r.left+r.width/2?-1:1);recalcTouch()});
